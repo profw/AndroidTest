@@ -11,8 +11,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
-import com.example.geoquizx.model.Question
 import com.example.geoquizx.viewmodel.QuizViewModel
 
 private const val TAG = "MainActivity"
@@ -34,11 +32,6 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val provider: ViewModelProvider = ViewModelProvider(this)
-        val quizViewModel = provider.get(QuizViewModel::class.java)
-        Log.d(TAG, "Got a QuizViewModel: $quizViewModel")
-
-
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
         prevButton = findViewById(R.id.prev_button)
@@ -54,12 +47,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         nextButton.setOnClickListener {
-            quizViewModel.moveToNext()
+            viewModel.moveToNext()
             updateQuestion()
         }
 
         prevButton.setOnClickListener {
-            quizViewModel.moveToPrev()
+            viewModel.moveToPrev()
             updateQuestion()
         }
 

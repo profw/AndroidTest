@@ -4,10 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.geoquizx.R
 import com.example.geoquizx.model.Question
-import kotlin.compareTo
-import kotlin.dec
-import kotlin.inc
-import kotlin.text.compareTo
 
 private const val TAG = "QuizViewModel"
 
