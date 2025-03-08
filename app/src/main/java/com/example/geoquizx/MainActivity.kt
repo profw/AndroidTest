@@ -7,10 +7,13 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.example.geoquizx.model.Question
+import com.example.geoquizx.viewmodel.QuizViewModel
 
 private const val TAG = "MainActivity"
 
@@ -22,16 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var questionTextView: TextView
 
 
-    private val questionBank = listOf(
-        Question(R.string.question_australia, true),
-        Question(R.string.question_oceans, true),
-        Question(R.string.question_mideast, false),
-        Question(R.string.question_africa, false),
-        Question(R.string.question_americas, true),
-        Question(R.string.question_asia, true)
-    )
-
-    private var currentIndex = 0
+    private val viewModel: QuizViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +33,11 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        val provider: ViewModelProvider = ViewModelProvider(this)
+        val quizViewModel = provider.get(QuizViewModel::class.java)
+        Log.d(TAG, "Got a QuizViewModel: $quizViewModel")
+
 
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
@@ -55,20 +54,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         nextButton.setOnClickListener {
-            currentIndex++
-            if (currentIndex >= questionBank.size) {
-                currentIndex = questionBank.size - 1
-            }
-
+            quizViewModel.moveToNext()
             updateQuestion()
         }
 
         prevButton.setOnClickListener {
-            currentIndex--
-            if (currentIndex < 0) {
-                currentIndex = 0
-            }
-
+            quizViewModel.moveToPrev()
             updateQuestion()
         }
 
@@ -79,7 +70,6 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
     }
 
     override fun onStart() {
@@ -101,26 +91,32 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         Log.d(TAG, "onStop() called")
     }
+
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy() called")
     }
 
     private fun updateQuestion() {
+        /*
         if (currentIndex < 0) {
             return
         }
-        val questionTextResId = questionBank[currentIndex].textResId
-        questionTextView.setText(questionTextResId)
-        prevButton.isEnabled = currentIndex > 0
-        nextButton.isEnabled = currentIndex < questionBank.size - 1
+
+         */
+        questionTextView.setText(viewModel.currentQuestionText)
+        prevButton.isEnabled = viewModel.isPrevAllowed
+        nextButton.isEnabled = viewModel.isNextAllowed
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
+        /*
         if (currentIndex < 0) {
             return
         }
-        val correctAnswer = questionBank[currentIndex].answer
+
+         */
+        val correctAnswer = viewModel.currentQuestionAnswer
         val messageResId = if (userAnswer == correctAnswer) {
             R.string.correct_toast
         } else {
