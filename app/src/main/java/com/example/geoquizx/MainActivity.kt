@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.geoquizx.viewmodel.QuizViewModel
 
 private const val TAG = "MainActivity"
+private const val KEY_INDEX = "index"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var trueButton: Button
@@ -31,6 +32,10 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        val currentIndex = savedInstanceState?.getInt(KEY_INDEX, 0) ?: 0
+        viewModel.currentIndex = currentIndex
+        Log.d(TAG, "currentIndex $currentIndex")
 
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
@@ -56,6 +61,8 @@ class MainActivity : AppCompatActivity() {
             updateQuestion()
         }
 
+
+
         updateQuestion()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -63,6 +70,11 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_INDEX, viewModel.currentIndex)
     }
 
     override fun onStart() {
@@ -91,24 +103,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateQuestion() {
-        /*
-        if (currentIndex < 0) {
-            return
-        }
-
-         */
         questionTextView.setText(viewModel.currentQuestionText)
         prevButton.isEnabled = viewModel.isPrevAllowed
         nextButton.isEnabled = viewModel.isNextAllowed
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
-        /*
-        if (currentIndex < 0) {
-            return
-        }
-
-         */
         val correctAnswer = viewModel.currentQuestionAnswer
         val messageResId = if (userAnswer == correctAnswer) {
             R.string.correct_toast
